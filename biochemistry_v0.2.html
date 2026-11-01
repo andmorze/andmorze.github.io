@@ -5692,7 +5692,7 @@ function renderMainMenu() {
       );
       const randomBtn = document.createElement("button");
       randomBtn.className = "master-btn random-test";
-      randomBtn.textContent = `🎲 Собрать тест (по 1 вопросу из ${totalAvailable} тем)`;
+      randomBtn.textContent = `🎲 Собрать тест (из ${totalAvailable} тем)`;
       randomBtn.disabled = totalAvailable === 0;
       randomBtn.addEventListener("click", startRandomTest);
       els.menu.appendChild(randomBtn);
