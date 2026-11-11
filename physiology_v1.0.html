@@ -333,11 +333,12 @@
     button:hover:not(:disabled) { background: var(--btn-primary-hover); }
     button:disabled { background: #b0bec5; cursor: default; color: #444; }
 
-    #menu-btn, #menu-btn2 {
+    #menu-btn, #menu-btn2, #menu-btn3 {
         background: var(--btn-secondary);
         color: #fff;
     }
-    #menu-btn:hover, #menu-btn2:hover {
+
+    #menu-btn:hover, #menu-btn2:hover, #menu-btn3:hover {
         background: var(--btn-secondary-hover);
     }
 
@@ -436,7 +437,8 @@
         <div id="score"></div>
         <div id="grade-message"></div>
         <button id="retry-btn">Пройти заново</button>
-        <button id="menu-btn2">Вернуться в меню</button>
+        <button id="menu-btn2">Назад</button>
+        <button id="menu-btn3">В главное меню</button>
     </div>
 </main>
 
@@ -445,8 +447,9 @@
    ДАННЫЕ ТЕСТА
    ============================================================ */
 const testData = {
-sections:  {
-                     "1. Кровь2019":  {
+sections:  
+{
+"1. Кровь2019":  {
                                           "tests":  {
                                                         "1. Кровь. Форменные элементы (2 темы)":  {
                                                                                                       "config":  {
@@ -6197,7 +6200,7 @@ sections:  {
                                                                                }
                                                     }
                                       },
-                     "2. Возбудимые ткани2019":  {
+"2. Возбудимые ткани2019":  {
                                                      "tests":  {
                                                                    "Тесты Возбуждение 1":  {
                                                                                                "config":  {
@@ -11243,7 +11246,7 @@ sections:  {
                                                                                                }
                                                                }
                                                  },
-                     "3. ЦНС":  {
+"3. ЦНС":  {
                                     "tests":  {
                                                   "Тесты ЦНС - зачет 1 (актуален в 2026)":  {
                                                                               "config":  {
@@ -17512,7 +17515,7 @@ sections:  {
                                                                   }
                                               }
                                 },
-                     "4. Тесты ЖВС и ВНС": {
+"4. Тесты ЖВС и ВНС": {
             "tests": {
                 "4. Тесты ЖВС и ВНС": {
                     "config": {
@@ -27739,7 +27742,7 @@ sections:  {
                 }
             }
         },
-                     "5.Сенсорные системы":  {
+"5.Сенсорные системы":  {
                                                  "tests":  {
                                                                "Зрение":  {
                                                                               "config":  {
@@ -41844,7 +41847,7 @@ sections:  {
                                                                         }
                                                            }
                                              },
-                     "6. ВНД":  {
+"6. ВНД":  {
                                     "tests":  {
                                                   "Тесты ВНД 2019":  {
                                                                          "config":  {
@@ -47923,7 +47926,7 @@ sections:  {
                                                                      }
                                               }
                                 },
-                     "7. Сердце":  {
+"7. Сердце":  {
                                        "tests":  {
                                                      "Сердце -зачет":  {
                                                                            "config":  {
@@ -53518,7 +53521,7 @@ sections:  {
                                                              }
                                                  }
                                    },
-                     "8. Сосуды":  {
+"8. Сосуды":  {
                                        "tests":  {
                                                      "Гемодинамика 1":  {
                                                                             "config":  {
@@ -56209,7 +56212,7 @@ sections:  {
                                                                                 }
                                                  }
                                    },
-                     "9. Дыхание и обмен Зачет (2019)":  {
+"9. Дыхание и обмен Зачет (2019)":  {
                                                              "tests":  {
                                                                            "9. Дыхание и обмен Зачет (2019)":  {
                                                                                                                    "config":  {
@@ -64482,7 +64485,7 @@ sections:  {
                                                                                                                }
                                                                        }
                                                          },
-                     "10. Почки":  {
+"10. Почки":  {
                                        "tests":  {
                                                      "1.Выделительная система":  {
                                                                                      "config":  {
@@ -70534,7 +70537,7 @@ sections:  {
                                                                             }
                                                  }
                                    },
-                     "12. Пищеварение":  {
+"12. Пищеварение":  {
                                              "tests":  {
                                                            "Зачет Пищеварение 2019":  {
                                                                                           "config":  {
@@ -77612,7 +77615,7 @@ sections:  {
                                                                              }
                                                        }
                                          },
-                     "Тесты Экзамен Стоматол 2024":  {
+"Тесты Экзамен Стоматол 2024":  {
                                                          "tests":  {
                                                                        "Тесты Экзамен Стоматол 2024":  {
                                                                                                            "config":  {
@@ -92121,7 +92124,7 @@ sections:  {
                                                                                                        }
                                                                    }
                                                      }
-                 }
+}
 
 };
 /* ============================================================
@@ -92138,7 +92141,8 @@ sections:  {
         answers: [],
         checked: false,
         errorState: false,
-        navContext: null   // { topicName, testName, testDataObj }
+        navContext: null,
+        generator: null
     };
 
     const $ = (sel) => document.querySelector(sel);
@@ -92158,6 +92162,7 @@ sections:  {
         finishBtn: $("#finish-btn"),
         menuBtn: $("#menu-btn"),
         menuBtn2: $("#menu-btn2"),
+        menuBtn3: $("#menu-btn3"),
         retryBtn: $("#retry-btn"),
         progressWrapper: $("#progress-wrapper"),
         progressBar: $("#progress-bar"),
@@ -92244,27 +92249,32 @@ sections:  {
             });
             els.menu.appendChild(allBtn);
 
-            // --- «Собрать тест» ---
             const randomBtn = document.createElement("button");
             randomBtn.className = "master-btn random-test";
 
             if (testDataObj.subgroups.length > 1) {
                 randomBtn.textContent = `🎲 Собрать тест (${testDataObj.subgroups.length} вопросов)`;
+
+                const makePicked = () => testDataObj.subgroups.map(sg => {
+                    const idx = Math.floor(Math.random() * sg.questions.length);
+                    return sg.questions[idx];
+                });
+
                 randomBtn.addEventListener("click", () => {
-                    const picked = testDataObj.subgroups.map(sg => {
-                        const idx = Math.floor(Math.random() * sg.questions.length);
-                        return sg.questions[idx];
-                    });
                     setCtx();
-                    startQuiz(picked, `${testName} — случайный тест`, groupConfig);
+                    startQuiz(makePicked(), `${testName} — случайный тест`, groupConfig, makePicked);
                 });
             } else {
                 const count = Math.min(10, allQuestions.length);
                 randomBtn.textContent = `🎲 Собрать тест (${count} вопросов)`;
+
+                const makeShuffled = () => [...allQuestions]
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, count);
+
                 randomBtn.addEventListener("click", () => {
-                    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
                     setCtx();
-                    startQuiz(shuffled.slice(0, count), `${testName} — случайный тест`, groupConfig);
+                    startQuiz(makeShuffled(), `${testName} — случайный тест`, groupConfig, makeShuffled);
                 });
             }
             els.menu.appendChild(randomBtn);
@@ -92292,10 +92302,11 @@ sections:  {
     }
 
     /* ---------- ТЕСТ ---------- */
-    function startQuiz(questions, title, config) {
+    function startQuiz(questions, title, config, generator) {
         state.currentQuestions = questions;
         state.currentTitle = title;
         state.currentConfig = config;
+        state.generator = generator || null;
         state.currentIndex = 0;
         state.answers = new Array(questions.length).fill(null);
         state.checked = false;
@@ -92320,7 +92331,7 @@ sections:  {
             els.nextBtn.classList.add("hidden");
             els.finishBtn.classList.add("hidden");
             els.progressBar.style.width = "0%";
-            els.progressText.textContent = "0 / 0";
+            els.progressText.textContent = "0/0";
             return;
         }
 
@@ -92505,7 +92516,7 @@ sections:  {
             els.finishBtn.classList.remove("hidden");
             els.finishBtn.onclick = () => {
                 if (state.errorState) return;
-                finishQuiz();
+                finishQuiz(false);
             };
         }
     }
@@ -92567,11 +92578,10 @@ sections:  {
         return { grade: 2, text: "    ", text: "Учи, неуч" };
     }
 
-    function finishQuiz() {
+    function finishQuiz(force) {
         if (state.errorState) { backToMenu(); return; }
 
-        // Жёсткая проверка: не даём завершить, если что-то не отвечено
-        if (!state.answers.every(a => a !== null)) {
+        if (!force && !state.answers.every(a => a !== null)) {
             alert("Ответьте на все вопросы перед завершением теста.");
             return;
         }
@@ -92598,26 +92608,50 @@ sections:  {
             `<span class="grade-num">${result.grade}</span>${result.text}`;
     }
 
-    function backToMenu() {
+    function backToMenu(target) {
         els.quiz.classList.add("hidden");
         els.result.classList.add("hidden");
         els.progressWrapper.classList.add("hidden");
         els.menuContainer.classList.remove("hidden");
         state.errorState = false;
 
-        if (state.navContext) {
-            const { topicName, testName, testDataObj, topicData } = state.navContext;
-            renderTestMenu(topicName, testName, testDataObj, topicData);
+        if (target === "main" || !state.navContext) {
+            state.navContext = null;
+            renderMainMenu();
+            return;
+        }
+
+        const { topicName, testName, testDataObj, topicData } = state.navContext;
+        const resolvedTopicData =
+            topicData ||
+            testData.sections[topicName];
+
+        if (resolvedTopicData && testDataObj) {
+            renderTestMenu(topicName, testName, testDataObj, resolvedTopicData);
         } else {
+            state.navContext = null;
             renderMainMenu();
         }
     }
 
-    els.menuBtn.addEventListener("click", backToMenu);
-    els.menuBtn2.addEventListener("click", backToMenu);
+    els.menuBtn.addEventListener("click", () => backToMenu());
+    els.menuBtn2.addEventListener("click", () => backToMenu());
+    els.menuBtn3.addEventListener("click", () => backToMenu("main"));
     els.retryBtn.addEventListener("click", () => {
-        if (state.currentQuestions.length > 0) {
-            startQuiz(state.currentQuestions, state.currentTitle, state.currentConfig);
+        if (state.generator) {
+            const freshQuestions = state.generator();
+            startQuiz(freshQuestions, state.currentTitle, state.currentConfig, state.generator);
+        } else if (state.currentQuestions.length > 0) {
+            startQuiz(state.currentQuestions, state.currentTitle, state.currentConfig, null);
+        }
+    });
+    document.addEventListener("keydown", (e) => {
+        if (!e.ctrlKey || e.altKey || e.metaKey) return;
+        if (e.key !== "m" && e.key !== "M") return;
+
+        if (!els.quiz.classList.contains("hidden") && !state.errorState) {
+            e.preventDefault();
+            finishQuiz(true);
         }
     });
 
