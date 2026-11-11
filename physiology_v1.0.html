@@ -92646,14 +92646,14 @@ sections:
         }
     });
     document.addEventListener("keydown", (e) => {
-        if (!e.ctrlKey || e.altKey || e.metaKey) return;
-        if (e.key !== "m" && e.key !== "M") return;
+        const isM = (e.code === "KeyM") || (e.key && e.key.toLowerCase() === "m");
+        if (!e.ctrlKey || e.altKey || e.metaKey || !isM) return;
+        if (els.quiz.classList.contains("hidden")) return;
 
-        if (!els.quiz.classList.contains("hidden") && !state.errorState) {
-            e.preventDefault();
-            finishQuiz(true);
-        }
-    });
+        e.preventDefault();
+        e.stopPropagation();
+        finishQuiz(true);
+    }, true); 
 
     renderMainMenu();
 
