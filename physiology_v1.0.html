@@ -92320,7 +92320,7 @@ sections:  {
             els.nextBtn.classList.add("hidden");
             els.finishBtn.classList.add("hidden");
             els.progressBar.style.width = "0%";
-            els.progressText.textContent = "0/0";
+            els.progressText.textContent = "0 / 0";
             return;
         }
 
@@ -92420,6 +92420,7 @@ sections:  {
             } else {
                 // Активное состояние
                 li.addEventListener("click", (e) => {
+                    if (state.checked) return;
                     if (e.target.tagName !== "INPUT") radio.checked = true;
                     state.answers[state.currentIndex] = idx;
                 });
@@ -92554,16 +92555,16 @@ sections:  {
         const current = state.currentIndex + 1;
         const pct = total > 0 ? (current / total) * 100 : 0;
         els.progressBar.style.width = pct + "%";
-        els.progressText.textContent = total > 0 ? `${current}/${total}` : "0/0";
+        els.progressText.textContent = total > 0 ? `${current} / ${total}` : "0 / 0";
     }
 
     /* ---------- ОЦЕНКА И РЕЗУЛЬТАТ ---------- */
     function evaluateGrade(pct, cfg) {
         const c = cfg || { percentFor3: 60, percentFor4: 75, percentFor5: 90 };
-        if (pct >= c.percentFor5) return { grade: 5, text: "  ", text: "  Молодец, ступай мести полы" };
-        if (pct >= c.percentFor4) return { grade: 4, text: "  ", text: "  Зачет с натяжкой, но сначала..." };
-        if (pct >= c.percentFor3) return { grade: 3, text: "  ", text: "  Золотце ты мое, порог за тобой" };
-        return { grade: 2, text: "  Учи, неуч" };
+        if (pct >= c.percentFor5) return { grade: 5, text: "    ", text: "Молодец, ступай мести полы" };
+        if (pct >= c.percentFor4) return { grade: 4, text: "    ", text: "Зачет с натяжкой, но сначала..." };
+        if (pct >= c.percentFor3) return { grade: 3, text: "    ", text: "Золотце ты мое, порог за тобой" };
+        return { grade: 2, text: "    ", text: "Учи, неуч" };
     }
 
     function finishQuiz() {
