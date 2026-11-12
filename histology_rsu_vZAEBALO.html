@@ -4257,7 +4257,7 @@
                 // --- 2) «Собрать тест» (33 случайных без повторов) ---
                 const randomBtn = document.createElement("button");
                 randomBtn.className = "master-btn random-test";
-                randomBtn.textContent = `🎲 Собрать тест (${QUIZ_SIZE} из ${total})`;
+                randomBtn.textContent = `🎲 Собрать тест (${QUIZ_SIZE} вопроса)`;
                 randomBtn.disabled = total < QUIZ_SIZE;
 
                 const makeRandomTest = () => {
